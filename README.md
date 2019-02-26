@@ -37,7 +37,7 @@ private EventSource eventSource;
 private void startEventSource() {
     String eventUrl = YOUR_URL;
 
-    Map<String, String> header = new HashMap<>();
+    Map<String, String> headerParameters = new HashMap<>();
     header.put("Authorization", "Token XXX");
 
     eventSource = new EventSource.Builder(eventUrl)
