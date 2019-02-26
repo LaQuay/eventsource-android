@@ -38,7 +38,8 @@ private void startEventSource() {
     String eventUrl = YOUR_URL;
 
     Map<String, String> headerParameters = new HashMap<>();
-    header.put("Authorization", "Token XXX");
+    headerParameters.put("Content-Type", "text/event-stream");
+    headerParameters.put("Authorization", "Bearer YOUR_TOKEN");
 
     eventSource = new EventSource.Builder(eventUrl)
         .eventHandler(sseHandler)
