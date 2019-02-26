@@ -4,9 +4,10 @@ An Android EventSource (SSE - Server Sent Events) Library
 
 ## Installation
 jCenter Gradle import
+```groovy
+implementation 'com.tylerjroach:eventsource:1.2.11'
+```
 
-    implementation 'com.tylerjroach:eventsource:1.2.11'
-    
 ## What's new 
 
 1.2.11
@@ -28,67 +29,69 @@ jCenter Gradle import
 
 
 ## Example
-    
-    private SSEHandler sseHandler = new SSEHandler();
-    private EventSource eventSource;
-    
-    private void startEventSource() {
-        String eventUrl = YOUR_URL;
-        
-        Map<String, String> header = new HashMap<>();
-        header.put("Authorization", "Token XXX");
-        
-        eventSource = new EventSource.Builder(eventUrl)
-            .eventHandler(sseHandler)
-            .headers(headerParameters)
-            .build();
-        eventSource.connect();
+   
+```java
+private SSEHandler sseHandler = new SSEHandler();
+private EventSource eventSource;
+
+private void startEventSource() {
+    String eventUrl = YOUR_URL;
+
+    Map<String, String> header = new HashMap<>();
+    header.put("Authorization", "Token XXX");
+
+    eventSource = new EventSource.Builder(eventUrl)
+        .eventHandler(sseHandler)
+        .headers(headerParameters)
+        .build();
+    eventSource.connect();
+}
+
+private void stopEventSource() {
+    if (eventSource != null)
+        eventSource.close();
+    sseHandler = null;
+}
+
+/**
+* All callbacks are currently returned on executor thread. 
+* If you want to update the ui from a callback, make sure to post to main thread
+*/
+
+private class SSEHandler implements EventSourceHandler {
+
+    public SSEHandler() {}
+
+    @Override
+    public void onConnect() {
+        Log.v("SSE Connected", "True");
     }
-           
-    private void stopEventSource() {
-        if (eventSource != null)
-            eventSource.close();
-        sseHandler = null;
+
+    @Override
+    public void onMessage(String event, MessageEvent message) {
+        Log.v("SSE Message", event);
+        Log.v("SSE Message: ", message.lastEventId);
+        Log.v("SSE Message: ", message.data);
     }
-    
-    /**
-    * All callbacks are currently returned on executor thread. 
-    * If you want to update the ui from a callback, make sure to post to main thread
-    */
 
-    private class SSEHandler implements EventSourceHandler {
-
-        public SSEHandler() {}
-        
-        @Override
-        public void onConnect() {
-            Log.v("SSE Connected", "True");
-        }
-
-        @Override
-        public void onMessage(String event, MessageEvent message) {
-            Log.v("SSE Message", event);
-            Log.v("SSE Message: ", message.lastEventId);
-            Log.v("SSE Message: ", message.data);
-        }
-
-        @Override
-        public void onComment(String comment) {
-           //comments only received if exposeComments turned on
-           Log.v("SSE Comment", comment);
-        }
-
-        @Override
-        public void onError(Throwable t) {
-            //ignore ssl NPE on eventSource.close()
-        }
-
-        @Override
-        public void onClosed(boolean willReconnect) {
-            Log.v("SSE Closed", "reconnect? " + willReconnect);
-        }
+    @Override
+    public void onComment(String comment) {
+       //comments only received if exposeComments turned on
+       Log.v("SSE Comment", comment);
     }
-        
+
+    @Override
+    public void onError(Throwable t) {
+        //ignore ssl NPE on eventSource.close()
+    }
+
+    @Override
+    public void onClosed(boolean willReconnect) {
+        Log.v("SSE Closed", "reconnect? " + willReconnect);
+    }
+}
+```
+
 To stop event source, make sure to run `eventSource.close()`
 
 If you have a pull request, please follow square-android style guides found here: https://github.com/square/java-code-styles
