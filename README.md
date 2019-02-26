@@ -2,11 +2,14 @@
 
 An Android EventSource (SSE - Server Sent Events) Library
 
+## Installation
 jCenter Gradle import
 
-    compile 'com.tylerjroach:eventsource:1.2.11'
+    implementation 'com.tylerjroach:eventsource:1.2.11'
     
-## What's new (1.2.11)
+## What's new 
+
+1.2.11
 * Removed need to create event source in background thread, now done automatically
 * First official jcenter release
 * Executor fix
@@ -24,20 +27,26 @@ jCenter Gradle import
 * Ability to choose thread for callbacks to return
 
 
-##Example implementation:
+## Example
     
     private SSEHandler sseHandler = new SSEHandler();
+    private EventSource eventSource;
     
     private void startEventSource() {
+        String eventUrl = YOUR_URL;
+        
+        Map<String, String> header = new HashMap<>();
+        header.put("Authorization", "Token XXX");
+        
         eventSource = new EventSource.Builder(eventUrl)
             .eventHandler(sseHandler)
-            .headers(extraHeaderParameters)
+            .headers(headerParameters)
             .build();
         eventSource.connect();
     }
            
     private void stopEventSource() {
-        if (eventsource != null)
+        if (eventSource != null)
             eventSource.close();
         sseHandler = null;
     }
@@ -78,8 +87,9 @@ jCenter Gradle import
         public void onClosed(boolean willReconnect) {
             Log.v("SSE Closed", "reconnect? " + willReconnect);
         }
+    }
         
-To stop event source, make sure to run eventSource.close()
+To stop event source, make sure to run `eventSource.close()`
 
 If you have a pull request, please follow square-android style guides found here: https://github.com/square/java-code-styles
 
